@@ -78,6 +78,8 @@ void nndemo::NeuralNet::train(const std::vector<std::vector<float>>& features,
     std::vector<std::vector<float>> oneses;
     for (auto& layer : nodevalues) {
         oneses.emplace_back(std::vector<float>(layer.size(), 1.0));
+        // so that bias nodes will be 1.0 during backpropagation
+        oneses.back().back() = 2.0;
     }
     std::vector<std::vector<float>> truths;
     for (int i = 0; i < nodevalues.back().size(); ++i) {
@@ -107,7 +109,6 @@ void nndemo::NeuralNet::train(const std::vector<std::vector<float>>& features,
                                                                std::begin(weights[j][k]),
                                                                0.0f));
                 }
-                // bias weights have a delta of 0, since bias nodes always output 1
                 deltas[j] = elementwise_multiply(weightederror,
                                                  elementwise_multiply(nodevalues[j],
                                                                       elementwise_subtract(oneses[j],
@@ -152,7 +153,7 @@ void nndemo::NeuralNet::forward_propagate(const std::vector<float>& example) {
     for (int layer = 1; layer < nodevalues.size(); ++layer) {
         for (int node = 0; node < nodevalues[layer].size()-1; ++node) {
             std::vector<float> relevant_weights;
-            for (int i = 0; i < nodevalues[layer-1].size()-1; ++i) {
+            for (int i = 0; i < weights[layer-1].size(); ++i) {
                 relevant_weights.push_back(weights[layer-1][i][node]);
             }
             nodevalues[layer][node] = sigmoid(std::inner_product(std::begin(nodevalues[layer-1]),
@@ -162,6 +163,17 @@ void nndemo::NeuralNet::forward_propagate(const std::vector<float>& example) {
             // std::cout << nodevalues[layer][node] << std::endl;
         }
         // output layer doesn't have bias term
-        if (layer < nodevalues.size()-1) assert(nodevalues[layer].back() == 1.0);
+        if (layer < nodevalues.size()-1) {
+            assert(nodevalues[layer].back() == 1.0);
+        } else {
+            std::vector<float> relevant_weights;
+            for (int i = 0; i < weights.back().size(); ++i) {
+                relevant_weights.push_back(weights.back()[i].back());
+            }
+            nodevalues.back().back() = sigmoid(std::inner_product(std::begin(nodevalues[layer-1]),
+                                                                  std::end(nodevalues[layer-1]),
+                                                                  std::begin(relevant_weights),
+                                                                  0.0f));
+        }
     }
 }
