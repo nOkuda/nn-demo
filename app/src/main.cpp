@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -51,10 +52,29 @@ parse_file(char* filename) {
         labels->push_back(std::stoul(elems.back()));
     } while (ifh.good());
     if (!ifh.eof()) {
-        std::cerr << "Problem loading file" << std::endl;
+        std::cerr << "Problem loading data" << std::endl;
         exit(2);
     }
     return std::make_tuple(std::move(features), std::move(labels));
+}
+
+std::vector<std::string> parse_arch(char* filename) {
+    std::vector<std::string> result;
+    nndemo::FileReader ifh(filename);
+    std::string strbuf;
+    do {
+        ifh.getline(strbuf);
+        if (strbuf.size() <= 0) {
+            // don't try to parse an empty line
+            continue;
+        }
+        result.push_back(strbuf);
+    } while (ifh.good());
+    if (!ifh.eof()) {
+        std::cerr << "Problem loading network architecture" << std::endl;
+        exit(3);
+    }
+    return result;
 }
 
 template<class URNG>
@@ -66,19 +86,20 @@ std::tuple<nndemo::Data, nndemo::NeuralNet> parse_args(int argc, char* argv[], U
     auto parsed_data = parse_file(argv[1]);
     auto features = std::move(std::get<0>(parsed_data));
     auto labels = std::move(std::get<1>(parsed_data));
-    nndemo::FileReader archreader(argv[2]);
+    auto arch = parse_arch(argv[2]);
     return std::make_tuple(nndemo::Data(features, labels, features->size()),
-                           nndemo::NeuralNet(archreader, rng));
+                           nndemo::NeuralNet(arch, rng));
 }
 } // end anonymous namespace
 
 int main(int argc, char* argv[]) {
-    std::default_random_engine rng;
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine rng(seed);
     auto parsed = parse_args(argc, argv, rng);
     auto data = std::move(std::get<0>(parsed));
     auto model = std::move(std::get<1>(parsed));
     data.shuffle(rng);
-    auto datasplit = data.split_data(0.8);
+    auto datasplit = data.split_data(0.6);
     auto training_selection = std::get<0>(datasplit);
     auto test_selection = std::get<1>(datasplit);
     auto training = data.get_data(training_selection);
