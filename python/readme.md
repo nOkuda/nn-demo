@@ -43,12 +43,12 @@ installed, but your environment needs to be configured so that tensorflow
 recognizes that CUDA is installed.  In my `~/.bash_profile`, I have the
 following lines:
 ```
-    if [ -d "/usr/local/cuda" ]; then
-        export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-        PATH=$PATH:/usr/local/cuda/bin
-    fi
+if [ -d "/usr/local/cuda" ]; then
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+    PATH=$PATH:/usr/local/cuda/bin
+fi
 
-    export PATH
+export PATH
 ```
 Once you've got these lines in your `~/.bash_profile`, save the file and log
 back into a yam.
@@ -98,12 +98,12 @@ Choose a convenient place to set up a virtual environment.  I've chosen the
 local directory on the yam I'm using (`/local/okuda/tf`).  Make that directory.
 Now run
 ```
-   python3 -m venv <path to chosen directory>
+python3 -m venv <path to chosen directory>
 ```
 This should create a virtual environment for your chosen directory.  Now
 activate your virtual environment by running
 ```
-   source <path to chosen directory>/bin/activate.sh
+source <path to chosen directory>/bin/activate.sh
 ```
 The terminal prompt will probably change, indicating that you are now in a
 virtual environment.
@@ -113,8 +113,8 @@ virtual environment.
 While your virtual environment is active, you can install tensorflow via pip.
 To do so, run
 ```
-   export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-0.12.0rc0-cp35-cp35m-linux_x86_64.whl
-   pip3 install --upgrade $TF_BINARY_URL
+export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/gpu/tensorflow_gpu-0.12.0rc0-cp35-cp35m-linux_x86_64.whl
+pip3 install --upgrade $TF_BINARY_URL
 ```
 The first line sets the version of tensorflow you'll be downloading.  It is
 version 0.12 with the GPU features enabled.
@@ -124,7 +124,7 @@ version 0.12 with the GPU features enabled.
 You'll probably want a few more Python packages installed in your virtual
 envrionment.  While your virtual environment is active, run
 ```
-   pip3 install <package name>
+pip3 install <package name>
 ```
 to install a package.  I like to have `numpy`, `scipy`, and `matplotlib`
 installed.
@@ -133,5 +133,5 @@ installed.
 
 Assuming your virtual environment is still active and that you want your virtual environment to no longer be active, you can deactivate your virtual environment by running
 ```
-   deactivate
+deactivate
 ```
