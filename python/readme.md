@@ -103,7 +103,7 @@ python3 -m venv <path to chosen directory>
 This should create a virtual environment for your chosen directory.  Now
 activate your virtual environment by running
 ```
-source <path to chosen directory>/bin/activate.sh
+source <path to chosen directory>/bin/activate
 ```
 The terminal prompt will probably change, indicating that you are now in a
 virtual environment.
@@ -131,7 +131,60 @@ installed.
 
 #### Getting Out of a Virtual Environment
 
-Assuming your virtual environment is still active and that you want your virtual environment to no longer be active, you can deactivate your virtual environment by running
+Assuming your virtual environment is still active and that you want your
+virtual environment to no longer be active, you can deactivate your virtual
+environment by running
 ```
 deactivate
+```
+
+## Making Sure Tensorflow Works
+
+To make sure that your tensorflow installation is working properly, start by
+activating your virtual environment.  Then run
+```
+python3 <path to virtual environment directory>/lib64/python3.5/site-packages/tensorflow/models/image/mnist/convolutional.py
+```
+If the GPU is running properly, you should see some messages that say so.  I saw
+```
+I tensorflow/stream_executor/dso_loader.cc:111] successfully opened CUDA library libcublas.so locally
+I tensorflow/stream_executor/dso_loader.cc:111] successfully opened CUDA library libcudnn.so locally
+I tensorflow/stream_executor/dso_loader.cc:111] successfully opened CUDA library libcufft.so locally
+I tensorflow/stream_executor/dso_loader.cc:111] successfully opened CUDA library libcuda.so.1 locally
+I tensorflow/stream_executor/dso_loader.cc:111] successfully opened CUDA library libcurand.so locally
+```
+There was also some data download necessary
+```
+Successfully downloaded train-images-idx3-ubyte.gz 9912422 bytes.
+Successfully downloaded train-labels-idx1-ubyte.gz 28881 bytes.
+Successfully downloaded t10k-images-idx3-ubyte.gz 1648877 bytes.
+Successfully downloaded t10k-labels-idx1-ubyte.gz 4542 bytes.
+Extracting data/train-images-idx3-ubyte.gz
+Extracting data/train-labels-idx1-ubyte.gz
+Extracting data/t10k-images-idx3-ubyte.gz
+Extracting data/t10k-labels-idx1-ubyte.gz
+```
+Then the code started running.
+```
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:951] Found device 0 with properties: 
+name: TITAN X (Pascal)
+major: 6 minor: 1 memoryClockRate (GHz) 1.531
+pciBusID 0000:01:00.0
+Total memory: 11.90GiB
+Free memory: 11.76GiB
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:972] DMA: 0 
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:982] 0:   Y 
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:1041] Creating TensorFlow device (/gpu:0) -> (device: 0, name: TITAN X (Pascal), pci bus id: 0000:01:00.0)
+```
+The final lines I saw were
+```
+Step 8400 (epoch 9.77), 3.8 ms
+Minibatch loss: 1.596, learning rate: 0.006302
+Minibatch error: 0.0%
+Validation error: 0.7%
+Step 8500 (epoch 9.89), 3.8 ms
+Minibatch loss: 1.620, learning rate: 0.006302
+Minibatch error: 1.6%
+Validation error: 0.9%
+Test error: 0.8%
 ```
